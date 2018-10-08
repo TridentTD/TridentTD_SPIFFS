@@ -37,7 +37,7 @@
 
 #### td_SPIFFS.readFile  ("/ชื่อไฟล์")
 
-     อ่านข้อมูลจากไฟล์ทีก่ำหนด โดยแสดงไปยัง Serial Monitor
+     อ่านข้อมูลจากไฟล์ทีก่ำหนด ส่งค่าคืนเป็น String ข้อมูลภายใน file
 
 #### td_SPIFFS.readFiletoStream  ("/ชื่อไฟล์", stream)
 
