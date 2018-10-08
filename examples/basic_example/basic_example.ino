@@ -21,7 +21,8 @@ void setup() {
   td_SPIFFS.renameFile("/hello.txt", "/foo.txt");
 
   // อ่านข้อมูลจาก file
-  td_SPIFFS.readFile  ("/foo.txt");
+  String data = td_SPIFFS.readFile  ("/foo.txt");
+  Serial.println(data);
 
   // แสดง file ใน SPIFFS ทั้งหมด
   td_SPIFFS.listDir();

@@ -105,27 +105,33 @@ void TridentTD_SPIFFS::_listDir(fs::FS &fs, const char *dirname, uint8_t levels 
 }
 #endif
 
-void TridentTD_SPIFFS::readFile(String path) {
+String TridentTD_SPIFFS::readFile(String path) {
+  String ret = "";
+
   Serial.printf("Reading file: %s\r\n", path.c_str());
 
 #if defined (ESP32)
   File file = this->open(path.c_str());
   if (!file || file.isDirectory()) {
     Serial.println("[td_SPIFFS] failed to open file for reading");
-    return;
+    return ret;
   }
 #elif defined (ESP8266)
   File file = this->open(path.c_str(), "r");
   if (!file) {
     Serial.println("[td_SPIFFS] failed to open file for reading");
-    return;
+    return ret;
   }  
 #endif
 
   Serial.println("[td_SPIFFS] read from file:");
+
+
   while (file.available()) {
-    Serial.write(file.read());
+    char c = file.read();
+    ret += c;
   }
+  return ret;
 }
 
 void TridentTD_SPIFFS::readFiletoStream(String path, Stream &stm) {

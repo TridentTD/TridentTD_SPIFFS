@@ -29,7 +29,7 @@ class TridentTD_SPIFFS : public FS
     size_t usedBytes();
 #endif
     void listDir(String dirname = "/");
-    void readFile(String path);
+    String readFile(String path);
     void readFiletoStream(String path, Stream &stm);
 
     void writeFile(String path, String message);
@@ -40,6 +40,7 @@ class TridentTD_SPIFFS : public FS
 #if defined (ESP32)
     void _listDir(fs::FS &fs, const char *dirname="/", uint8_t levels = 0);
 #endif
+    String verion = "1.0.0";
 };
 }
 
