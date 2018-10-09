@@ -105,7 +105,7 @@ void TridentTD_SPIFFS::_listDir(fs::FS &fs, const char *dirname, uint8_t levels 
 }
 #endif
 
-String TridentTD_SPIFFS::readFile(String path) {
+String TridentTD_SPIFFS::readFiletoString(String path) {
   String ret = "";
 
   Serial.printf("Reading file: %s\r\n", path.c_str());
@@ -117,7 +117,7 @@ String TridentTD_SPIFFS::readFile(String path) {
     return ret;
   }
 #elif defined (ESP8266)
-  File file = this->open(path.c_str(), "r");
+  File file = this->open(path.c_str(), FILE_READ);
   if (!file) {
     Serial.println("[td_SPIFFS] failed to open file for reading");
     return ret;
@@ -131,6 +131,8 @@ String TridentTD_SPIFFS::readFile(String path) {
     char c = file.read();
     ret += c;
   }
+
+  file.close();
   return ret;
 }
 
@@ -160,11 +162,13 @@ void TridentTD_SPIFFS::readFiletoStream(String path, Stream &stm) {
 void TridentTD_SPIFFS::writeFile(String path, String message) {
   Serial.printf("Writing file: %s\r\n", path.c_str());
 
-#if defined (ESP32)
+// #if defined (ESP32)
+//   File file = this->open(path.c_str(), FILE_WRITE);
+// #elif defined (ESP8266)
+//   File file = this->open(path.c_str(), "w");
+// #endif
+
   File file = this->open(path.c_str(), FILE_WRITE);
-#elif defined (ESP8266)
-  File file = this->open(path.c_str(), "w");
-#endif
 
   if (!file) {
     Serial.println("[td_SPIFFS] failed to open file for writing");
@@ -177,16 +181,19 @@ void TridentTD_SPIFFS::writeFile(String path, String message) {
   } else {
     Serial.println("[td_SPIFFS] frite failed");
   }
+
+  file.close();
 }
 
 void TridentTD_SPIFFS::appendFile(String path, String message) {
   Serial.printf("Appending to file: %s\r\n", path.c_str());
 
-#if defined (ESP32)
+// #if defined (ESP32)
+//   File file = this->open(path.c_str(), FILE_APPEND);
+// #elif defined (ESP8266)
+//   File file = this->open(path.c_str(), "a");
+// #endif
   File file = this->open(path.c_str(), FILE_APPEND);
-#elif defined (ESP8266)
-  File file = this->open(path.c_str(), "a");
-#endif
 
   if (!file) {
     Serial.println("[td_SPIFFS] failed to open file for appending");
@@ -197,6 +204,8 @@ void TridentTD_SPIFFS::appendFile(String path, String message) {
   } else {
     Serial.println("[td_SPIFFS] append failed");
   }
+
+  file.close();
 }
 
 void TridentTD_SPIFFS::renameFile(String path1, String path2) {
@@ -216,6 +225,66 @@ void TridentTD_SPIFFS::deleteFile(String path) {
     Serial.println("[td_SPIFFS] delete failed");
   }
 }
+
+// void TridentTD_SPIFFS::beginFile(String filename, const char* mode) {
+//   _file = this->open(filename.c_str(), mode);
+// }
+
+void TridentTD_SPIFFS::openFile(String filename){
+  if(this->exists(filename.c_str())) {
+    _file = this->open(filename.c_str(), FILE_APPEND);
+  }else{
+    _file = this->open(filename.c_str(), FILE_WRITE);
+  }
+}
+
+void TridentTD_SPIFFS::readFile(String filename){
+  _file = this->open(filename.c_str(), FILE_READ);
+}
+
+void TridentTD_SPIFFS::closeFile() {
+  _file.close();
+}
+
+size_t TridentTD_SPIFFS::write(uint8_t c) {
+  if (!_file) return 0;
+  return _file.write(c);
+}
+
+size_t TridentTD_SPIFFS::write(const uint8_t *buf, size_t size) {
+  if (!_file) return 0;
+  return _file.write(buf, size);
+}
+
+void TridentTD_SPIFFS::flush() {
+  if (!_file) return;
+  return _file.flush();
+}
+
+int TridentTD_SPIFFS::available(){
+  if (!_file) return 0;
+    return _file.size() - _file.position();
+}
+
+int TridentTD_SPIFFS::read(){
+  if (!_file) return -1;
+  return _file.read();
+}
+
+size_t TridentTD_SPIFFS::readBytes(char *buffer, size_t length) {
+  if (!_file) return -1;
+  return _file.readBytes(buffer, length);
+}
+
+int TridentTD_SPIFFS::peek(){
+  if (!_file) return -1;
+  return _file.peek();
+}
+
+// size_t TridentTD_SPIFFS::read(uint8_t* buf, size_t size){
+//   if (!_file) return -1;
+//   return _file.read(buf,size);
+// }
 
 #if defined (ESP8266)
 #include "spiffs_api.h"

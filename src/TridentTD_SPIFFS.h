@@ -14,10 +14,15 @@
 namespace fs
 {
 #if defined (ESP32)
-class TridentTD_SPIFFS : public SPIFFSFS 
+class TridentTD_SPIFFS : public SPIFFSFS , public Stream
 #endif
 #if defined (ESP8266)
-class TridentTD_SPIFFS : public FS 
+
+#define FILE_READ       "r"
+#define FILE_WRITE      "w"
+#define FILE_APPEND     "a"
+
+class TridentTD_SPIFFS : public FS , public Stream
 #endif
 {
   public:
@@ -28,8 +33,26 @@ class TridentTD_SPIFFS : public FS
     size_t totalBytes();
     size_t usedBytes();
 #endif
+
+    //---------------------------------------
+    void openFile(String filename);
+    void readFile(String filename);
+    void closeFile();
+    // Print methods:
+    size_t write(uint8_t) override;
+    size_t write(const uint8_t *buf, size_t size) override;
+    void flush() override;
+
+    // Stream methods:
+    int available() override;
+    int read() override;
+    int peek() override;
+
+    size_t readBytes(char *buffer, size_t length);
+    //---------------------------------------
+
     void listDir(String dirname = "/");
-    String readFile(String path);
+    String readFiletoString(String path);
     void readFiletoStream(String path, Stream &stm);
 
     void writeFile(String path, String message);
@@ -40,6 +63,7 @@ class TridentTD_SPIFFS : public FS
 #if defined (ESP32)
     void _listDir(fs::FS &fs, const char *dirname="/", uint8_t levels = 0);
 #endif
+    File   _file;
     String verion = "1.0.0";
 };
 }

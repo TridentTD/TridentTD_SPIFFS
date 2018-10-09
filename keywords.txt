@@ -20,7 +20,7 @@ td_SPIFFS	KEYWORD1
 
 begin	KEYWORD2
 listDir	KEYWORD2
-readFile	KEYWORD2
+readFiletoString	KEYWORD2
 readFiletoStream	KEYWORD2
 writeFile	KEYWORD2
 appendFile	KEYWORD2
@@ -28,6 +28,11 @@ renameFile	KEYWORD2
 deleteFile	KEYWORD2
 totalBytes	KEYWORD2
 usedBytes	KEYWORD2
+format	KEYWORD2
+
+openFile	KEYWORD2
+readFile	KEYWORD2
+closeFile	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
