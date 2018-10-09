@@ -40,11 +40,11 @@ void setup() {
   Serial.println();
   td_SPIFFS.closeFile();
 
-  // แสดงขนาดของ file ที่ต้องการ
-  Serial.printf(" Size of /json_data.txt : %d\n", td_SPIFFS.filesize("/json_data.txt"));
-
   // แสดง file ใน SPIFFS ทั้งหมด
   td_SPIFFS.listDir();
+
+  // แสดงขนาดของ file ที่ต้องการ
+  Serial.printf(" Size of /json_data.txt : %d\n", td_SPIFFS.filesize("/json_data.txt"));
 
   // แสดงขนาด SPIFFS ท้งหมดและ ที่ใช้ไป
   Serial.printf("Total : %d bytes ; Used : %d bytes\n",td_SPIFFS.totalBytes(), td_SPIFFS.usedBytes());
@@ -52,6 +52,9 @@ void setup() {
   // ลบ file ทิ้ง
   if( td_SPIFFS.exists("/foo.txt") )
     td_SPIFFS.deleteFile("/foo.txt");
+
+  td_SPIFFS.deleteFile("/json_data.txt");
+
 }
 
 void loop() {
