@@ -29,6 +29,7 @@ deleteFile	KEYWORD2
 totalBytes	KEYWORD2
 usedBytes	KEYWORD2
 format	KEYWORD2
+filesize	KEYWORD2
 
 openFile	KEYWORD2
 readFile	KEYWORD2

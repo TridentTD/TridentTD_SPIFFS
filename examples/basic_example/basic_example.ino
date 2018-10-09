@@ -40,6 +40,9 @@ void setup() {
   Serial.println();
   td_SPIFFS.closeFile();
 
+  // แสดงขนาดของ file ที่ต้องการ
+  Serial.printf(" Size of /json_data.txt : %d\n", td_SPIFFS.filesize("/json_data.txt"));
+
   // แสดง file ใน SPIFFS ทั้งหมด
   td_SPIFFS.listDir();
 

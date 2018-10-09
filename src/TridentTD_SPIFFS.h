@@ -59,6 +59,7 @@ class TridentTD_SPIFFS : public FS , public Stream
     void appendFile(String path, String message);
     void renameFile(String path1, String path2);
     void deleteFile(String path);
+    size_t filesize(String path);
   private:
 #if defined (ESP32)
     void _listDir(fs::FS &fs, const char *dirname="/", uint8_t levels = 0);

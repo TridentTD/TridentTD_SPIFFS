@@ -57,10 +57,6 @@ void TridentTD_SPIFFS::listDir(String dirname) {
   Serial.printf("Listing directory: %s\r\n", dirname.c_str());
 
   Dir root = this->openDir(dirname);
-  // if (!root) {
-  //   Serial.println("[td_SPIFFS] failed to open directory");
-  //   return;
-  // }
   while (root.next()) {
     String fileName = root.fileName();
     Serial.print("  FILE: ");
@@ -226,9 +222,16 @@ void TridentTD_SPIFFS::deleteFile(String path) {
   }
 }
 
-// void TridentTD_SPIFFS::beginFile(String filename, const char* mode) {
-//   _file = this->open(filename.c_str(), mode);
-// }
+size_t TridentTD_SPIFFS::filesize(String path){
+  if(!this->exists(path.c_str())) return 0;
+  
+  File file = this->open(path.c_str(), FILE_READ);
+  size_t file_sz = file.size();
+  file.close();
+  return file_sz;
+}
+
+//-------------------------------
 
 void TridentTD_SPIFFS::openFile(String filename){
   if(this->exists(filename.c_str())) {
