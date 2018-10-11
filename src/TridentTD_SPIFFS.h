@@ -35,20 +35,23 @@ class TridentTD_SPIFFS : public FS , public Stream
 #endif
 
     //---------------------------------------
-    void openFile(String filename);
-    void readFile(String filename);
-    void closeFile();
+    int8_t openFile(String filename);   // เปิดไฟล์สำหรับเขียน
+    int8_t readFile(String filename);   // เปิดไฟล์สำหรับอ่าน
+    void closeFile();                   // ปิดไฟล์
     // Print methods:
-    size_t write(uint8_t) override;
-    size_t write(const uint8_t *buf, size_t size) override;
+    size_t write(uint8_t) override;     // เขียนทีละ byte
+    size_t write(const uint8_t *buf, size_t size) override;  // เขียนทีละ size
     void flush() override;
 
     // Stream methods:
-    int available() override;
-    int read() override;
-    int peek() override;
+    int available() override;           // เช็คว่าเหลือเท่าไหร่ตอนนี้
+    int read() override;                // อ่านทีละ byte ออกมา พร้อมกับตำแหน่งเลื่อนไปตัวถัดไป
+    int peek() override;                // เหมือน read() แต่ยังไม่ขยับตำแหน่งในการอ่าน
 
-    size_t readBytes(char *buffer, size_t length);
+    size_t readBytes(char *buffer, size_t length);  // อ่านออกมาทีละหลาย byte
+    size_t position() const;            // ตำแหน่งปัจจุบันของ file ที่เปิดอยู่
+    bool   feof();                      // ตำแหน่งขณะนี้สิ้นสุด file หรือไม่
+    void   rewind();                    // กลับไปเริ่มต้นไฟล์ใหม่
     //---------------------------------------
 
     void listDir(String dirname = "/");
@@ -65,6 +68,8 @@ class TridentTD_SPIFFS : public FS , public Stream
     void _listDir(fs::FS &fs, const char *dirname="/", uint8_t levels = 0);
 #endif
     File   _file;
+    size_t _size();
+    int8_t _bFileOpened = 0;
     String verion = "1.0.0";
 };
 }

@@ -104,7 +104,7 @@ void TridentTD_SPIFFS::_listDir(fs::FS &fs, const char *dirname, uint8_t levels 
 String TridentTD_SPIFFS::readFiletoString(String path) {
   String ret = "";
 
-  Serial.printf("Reading file: %s\r\n", path.c_str());
+  // Serial.printf("Reading file: %s\r\n", path.c_str());
 
 #if defined (ESP32)
   File file = this->open(path.c_str());
@@ -120,7 +120,7 @@ String TridentTD_SPIFFS::readFiletoString(String path) {
   }  
 #endif
 
-  Serial.println("[td_SPIFFS] read from file:");
+  // Serial.println("[td_SPIFFS] read from file:");
 
 
   while (file.available()) {
@@ -214,11 +214,11 @@ void TridentTD_SPIFFS::renameFile(String path1, String path2) {
 }
 
 void TridentTD_SPIFFS::deleteFile(String path) {
-  Serial.printf("Deleting file: %s\r\n", path.c_str());
+  // Serial.printf("Deleting file: %s\r\n", path.c_str());
   if (this->remove(path.c_str())) {
-    Serial.println("[td_SPIFFS] file deleted");
+    Serial.printf("[td_SPIFFS] file : %s   ... deleted\r\n", path.c_str());
   } else {
-    Serial.println("[td_SPIFFS] delete failed");
+    Serial.printf("[td_SPIFFS] file : %s   ... delete failed\r\n", path.c_str());
   }
 }
 
@@ -233,56 +233,86 @@ size_t TridentTD_SPIFFS::filesize(String path){
 
 //-------------------------------
 
-void TridentTD_SPIFFS::openFile(String filename){
+int8_t TridentTD_SPIFFS::openFile(String filename){
   this->closeFile();
   if(this->exists(filename.c_str())) {
     _file = this->open(filename.c_str(), FILE_APPEND);
+    _bFileOpened = (_file)? 3:0;
+    return _bFileOpened;
   }else{
     _file = this->open(filename.c_str(), FILE_WRITE);
+    _bFileOpened = (_file)? 2:0;
+    return _bFileOpened;
   }
 }
 
-void TridentTD_SPIFFS::readFile(String filename){
+int8_t TridentTD_SPIFFS::readFile(String filename){
+  this->closeFile();
   _file = this->open(filename.c_str(), FILE_READ);
+
+  _bFileOpened = (_file)? 1:0;
+  return _bFileOpened;
 }
 
 void TridentTD_SPIFFS::closeFile() {
-  _file.close();
+  if(_bFileOpened) {
+    _bFileOpened = 0;
+    _file.close();
+  }
 }
 
 size_t TridentTD_SPIFFS::write(uint8_t c) {
-  if (!_file) return 0;
+  if (_bFileOpened == 0) return 0;
   return _file.write(c);
 }
 
 size_t TridentTD_SPIFFS::write(const uint8_t *buf, size_t size) {
-  if (!_file) return 0;
+  if (_bFileOpened == 0) return 0;
   return _file.write(buf, size);
 }
 
 void TridentTD_SPIFFS::flush() {
-  if (!_file) return;
+  if (_bFileOpened == 0) return;
   return _file.flush();
 }
 
 int TridentTD_SPIFFS::available(){
-  if (!_file) return 0;
+  if (_bFileOpened == 0) return 0;
     return _file.size() - _file.position();
 }
 
 int TridentTD_SPIFFS::read(){
-  if (!_file) return -1;
+  if (_bFileOpened == 0) return -1;
   return _file.read();
 }
 
 size_t TridentTD_SPIFFS::readBytes(char *buffer, size_t length) {
-  if (!_file) return -1;
+  if (_bFileOpened == 0) return -1;
   return _file.readBytes(buffer, length);
 }
 
 int TridentTD_SPIFFS::peek(){
-  if (!_file) return -1;
+  if (_bFileOpened == 0) return -1;
   return _file.peek();
+}
+
+size_t TridentTD_SPIFFS::position() const {
+  if (_bFileOpened == 0) return 0;
+  return _file.position();
+}
+
+bool TridentTD_SPIFFS::feof() {
+  return (this->position() == this->_size());
+}
+
+void TridentTD_SPIFFS::rewind(){
+  if (_bFileOpened == 0) return;
+  _file.seek(0,SeekSet);
+}
+
+size_t TridentTD_SPIFFS::_size(){
+  if(_bFileOpened == 0) return 0;
+  return _file.size();
 }
 
 // size_t TridentTD_SPIFFS::read(uint8_t* buf, size_t size){
