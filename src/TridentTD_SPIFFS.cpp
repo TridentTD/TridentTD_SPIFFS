@@ -234,6 +234,7 @@ size_t TridentTD_SPIFFS::filesize(String path){
 //-------------------------------
 
 void TridentTD_SPIFFS::openFile(String filename){
+  this->closeFile();
   if(this->exists(filename.c_str())) {
     _file = this->open(filename.c_str(), FILE_APPEND);
   }else{
