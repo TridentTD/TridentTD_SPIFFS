@@ -156,7 +156,7 @@ void TridentTD_SPIFFS::readFiletoStream(String path, Stream &stm) {
 }
 
 void TridentTD_SPIFFS::writeFile(String path, String message) {
-  Serial.printf("Writing file: %s\r\n", path.c_str());
+  // Serial.printf("Writing file: %s\r\n", path.c_str());
 
 // #if defined (ESP32)
 //   File file = this->open(path.c_str(), FILE_WRITE);
@@ -173,16 +173,16 @@ void TridentTD_SPIFFS::writeFile(String path, String message) {
 
 
   if (file.print(message)) {
-    Serial.println("[td_SPIFFS] file written");
+    Serial.printf("[td_SPIFFS] file: %s  ... written\r\n", path.c_str());
   } else {
-    Serial.println("[td_SPIFFS] frite failed");
+    Serial.printf("[td_SPIFFS] file: %s  ... write failed\r\n", path.c_str());
   }
 
   file.close();
 }
 
 void TridentTD_SPIFFS::appendFile(String path, String message) {
-  Serial.printf("Appending to file: %s\r\n", path.c_str());
+  // Serial.printf("Appending to file: %s\r\n", path.c_str());
 
 // #if defined (ESP32)
 //   File file = this->open(path.c_str(), FILE_APPEND);
@@ -196,9 +196,11 @@ void TridentTD_SPIFFS::appendFile(String path, String message) {
     return;
   }
   if (file.print(message)) {
-    Serial.println("[td_SPIFFS] message appended");
+    Serial.printf("[td_SPIFFS] file: %s  ... appended\r\n", path.c_str());
+    // Serial.println("[td_SPIFFS] message appended");
   } else {
-    Serial.println("[td_SPIFFS] append failed");
+    Serial.printf("[td_SPIFFS] file: %s  ... append failed\r\n", path.c_str());
+    // Serial.println("[td_SPIFFS] append failed");
   }
 
   file.close();
